@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<h2>Report</h2>
+
+<div class="row">
+
+    <div class="row">
+        <div class="col-sm-4">
+            From Date :
+            <div class="col-md-3 input-group date" id='fromDate'>
+                <input type="date" class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            To Date :
+            <div class="col-md-3 input-group date" id='toDate'>
+                <input type="date" class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <button type="button" class="btn btn-primary" id="btnViewReport">View</button>
+            <input type="button" value="Print" class="btn btn-success" onclick="PrintReport();" />
+        </div>
+    </div>
+    
+</div>
+
+<div class="clearfix" style="margin-bottom:1cm;"></div>
+<div id="report">
+    <div style="margin:10px">
+        <p style="font-size:2em;text-align:center;">Student Register Reports</p>
+    </div>
+
+    <table id="reportTable" style="border:1px solid black; border-collapse:collapse; margin:0 auto;">
+        <thead>
+            <tr>
+                <th style="border:1px solid black; padding:5px;">No</th>
+                <th style="border: 1px solid black; padding: 5px;">Invoice No</th>
+                <th style="border: 1px solid black; padding: 5px;">Name</th>
+                <th style="border: 1px solid black; padding: 5px;">PostingDate</th>
+                <th style="border: 1px solid black; padding: 5px;">Created By</th>
+                <th style="border: 1px solid black; padding: 5px;">Level Code</th>
+                <th style="border: 1px solid black; padding: 5px;">Level Name</th>
+                <th style="border: 1px solid black; padding: 5px;">Total</th>
+                <th style="border: 1px solid black; padding: 5px;">Deposit</th>
+                <th style="border: 1px solid black; padding: 5px;">Balance</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var viewReport = function () {
+            var fromDate = $('#fromDate input').val();
+            var toDate = $('#toDate input').val();
+            debugger;
+            $.post("/Report/ViewReports", { FromDate: fromDate, ToDate: toDate })
+                .done(function (data) {
+                    console.log(data);
+                    var no = 1;
+                    $('#reportTable tbody').html('');
+                    data.map(function (item) {
+                        $('#reportTable tbody').append('<tr>' +
+                            '<td style="border:1px solid black; padding:5px;">' + no + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;"><a href="#">' + item.invoiceNo + '</a></td > ' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.stuName + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.postingDate + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.userCode + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.levelCode + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.levelName + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.total + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.deposit + '</td>' +
+                            '<td style="border:1px solid black; padding:5px;">' + item.balanceDue + '</td>' +
+                            '</tr>');
+                        no++;
+                    });
+                })
+                .fail(function () {
+                    alert("error");
+                });
+        }
+        $('#btnViewReport').click(function () {
+            viewReport();
+        });
+    });
+
+</script>
+

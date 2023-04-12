@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    table tbody tr td {
+        background-color: #ffffff;
+        color: #808080;
+    }
+
+    table tbody tr.selected td {
+        background-color: slategray;
+        color: white;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h5>
+                <a asp-action="ViewLogin" asp-controller="Login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Home</a>
+                <span>
+                    <a href="#"><i class="fas fa-angle-right"></i>Deposit</a>
+                </span>
+            </h5>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-4">
+            Date From :
+            <input type="date" class="form-control" id="idDateFrom" />
+        </div>
+        <div class="col-sm-4">
+            Date To :
+            <input type="date" class="form-control" id="idDateTo" />
+        </div>
+    </div>
+    <br />
+    <div class="table-responsive">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class="table table-striped table-bordered nowrap" style="width: 100%; background-color: #D3D3D3; " id="idDeposit">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Invoice No.</th>
+                            <th>Student Name</th>
+                            <th>Posting Date</th>
+                            <th>Total</th>
+                            <th>Deposit</th>
+                            <th>Balane</th>
+                            <th>Command</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-12">
+            <center>
+                <a class="btn btn-primary" asp-action="CreateDeposit" asp-controller="Deposit">Add New</a>
+            </center>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#idDeposit').DataTable()
+
+    //Formate Date
+    $(".js-date").datepicker({
+        dateFormat: 'mm/dd/yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '1950:2100'
+    })
+
+</script>
+

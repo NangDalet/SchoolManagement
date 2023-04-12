@@ -1,0 +1,474 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+ <div class="container">
+         <div class="row">
+            <div class="col-sm-12">
+                <h5>
+                    <a asp-action="Index" asp-controller="Login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Home</a>
+                    <span>
+                        <a href="#"><i class="fas fa-angle-right"></i>User</a>
+                    </span>
+                </h5>
+            </div>
+        </div>
+    </div>
+<div class="col-lg-12">
+       @await Html.PartialAsync("~/Views/User/_User.cshtml") 
+</div>
+ <button type="button" onclick="addNewUser();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#idUserModal"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+ Add New
+</button>
+<hr />
+<div class="table-responsive">
+    <div class="row">
+         <div class="col-sm-12">
+              <table class="table table-striped table-bordered nowrap" style="width: 100%;" id="tbUser">
+                   <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Profile</th>
+                            <th>User Code</th>
+                            <th>Name</th>
+                            <th>UserType</th>
+                            <th>Locked</th>
+                            <th>CreateDate</th>
+                            <th>CreateBy</th>
+                            <th>Status</th>
+                            <th>Command</th>
+                        </tr>
+                   </thead>
+              </table>
+         </div>
+    </div>
+</div>
+    @*loading*@
+<div class="modal" id="Loading" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document" style="width: 120px;">
+        <div class="modal-content" style="padding: 10px; background-color: black; opacity:0.5;">
+            <div class="text-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; color:blue" role="status">
+                    <span class="sr-only">Loading....</span>
+                </div>
+                <br /> <span style="color:white">Loading....</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+     //$(".chosen-select").chosen({no_results_text: "Oops, nothing found!"});
+    //$(".chosen-select").chosen({ width: "100%" });
+
+    $(document).ajaxStart(function () {
+        $('#Loading').modal('show');
+    }).ajaxStop(function () {
+        $('#Loading').modal('hide');
+    });
+
+ var dataTable;
+    $(document).ready(function () {
+        dataTable = $('#tbUser').DataTable({
+            "ajax": {
+                "url": "/User/GetAllUser",
+                "type": "GET",
+                "datatype": "json",
+            },
+            columns: [
+                {
+                    render: function (data, type, full, meta) { return meta.row + 1; }
+                },
+                {
+                    data: 'image',
+                    name: 'image',
+                    render: function (data, type, full, meta) {
+                        return '<center><img src="../Uploads/User/' + data + '" style="width:35px; height:35px; border-radius:15%;" alt="User Image"></center>';
+                    }
+                },
+                {data: "userCode",autowidth: true},
+                {data: "name",autowidth: true},
+                {data: "userType", autowidth: true },
+                {data: "locked",autowidth: true},
+                {
+                    data: 'createDate',
+                    render: function (date) {
+                        var d = new Date(date),
+                            month = '' + (d.getMonth() + 1),
+                            day = '' + d.getDate(),
+                            year = d.getFullYear();
+
+                        if (month.length < 2)
+                            month = '0' + month;
+                        if (day.length < 2)
+                            day = '0' + day;
+                        return [year, month, day].join('-');
+                    }
+                },
+                {data: "createBy",autowidth: true},
+                {
+                    data:"status",autowidth: true,
+                    render:function (data, type, full, meta) {
+                        if (data =="Active") {
+                            return '<center><span class="badge rounded-pill bg-success">Active</span></center>'
+                        }
+                        else  {
+                            return '<center><span class="badge rounded-pill bg-danger">In-Active</span></center>'
+                        }                        
+                    }
+                },
+                  {
+                    render: function (data, type, full, meta) {
+                        return '<center><a href="#" onclick="userEdit(' + full.id + ')"style="margin-right:10px;"><i class="fa fa-edit fa-lg "></i></a> <a href="#" onclick="resetpass(' + full.id + ')"style="margin-right:10px;"><span class="fa-passwd-reset fa-stack"><i class="fa fa-undo fa-stack-2x"></i> <i class="fa fa-lock fa-stack-1x"></i></span></a></center>';
+                    }
+                }
+            ],
+             dom: 'Bfrtip',
+             buttons: [
+                    {
+                        extend: 'copy',                
+                        text: '<i class="far fa-copy"></i> Copy',
+                        filename: 'Report of User',
+                        title: "Information Of User",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="far fa-file-excel"></i> Excel',
+                        filename: 'Report of User',
+                        title: "Information Of User",
+                        exportOptions: {
+                            columns: [0, 2, 3,4,5,6,7,8]
+                        }
+                    },
+                    {
+                        extend: 'csv',                
+                        text: '<i class="fa-solid fa-file-csv"></i> Csv',
+                        filename: 'Report of User',
+                        title: "Information Of User",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="far fa-file-pdf"></i> Pdf',
+                        filename: 'Report of User',
+                        title: "Information Of User",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        filename: 'Report of User',
+                        title: "Information Of User",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    },
+                'pageLength'
+                ],
+            "order": [[4, "asc"]],
+                 rowGroup: {
+                    // Group by office
+                    dataSrc: 'userType'
+                },
+            "language": {
+                "emptyTable": "Not Found Data"
+            },
+            "width": "100%"
+
+        });
+    });
+
+    function UserAction() {
+    var action = '';
+    action = document.getElementById('btnSave').innerText;
+
+    if (action == "Add New") {
+        
+        document.getElementById('btnSave').innerText = "Save";
+        document.getElementById('idUserCode').disabled = false;
+        enableControls();
+        $('#idCode').focus();
+    } else if (action == "Save") {
+        if ($('#idUserCode').val().trim() == "") {
+            $('#idUserCode').css('border-color', 'red');
+            $('#idUserCode').focus();
+            toastr.info("Please enter user code.", "Server Response");
+        } else if ($('#idName').val().trim() == "") {
+            $('#idName').css('border-color', 'red');
+            $('#idName').focus();
+            toastr.info("Please enter Name.", "Server Response");
+            } else if ($('#idUserType').val().trim() == "") {
+            $('#idUserType').css('border-color', 'red');
+            $('#idUserType').focus();
+            toastr.info("Please enter emp code.", "Server Response");
+        } else {
+            $('#idUserCode').css('border-color', '#cccccc');
+            $('#idName').css('border-color', '#cccccc');
+                $('#idUserType').css('border-color', '#cccccc');
+            $('#Loading').modal('show')
+
+            var path = $('#input_file').val();
+            var pos = path.lastIndexOf(path.charAt(path.indexOf(":") + 1));
+            var filename = path.substring(pos + 1)
+
+            var obj = {
+                UserCode: $('#idUserCode').val(),
+                Name: $('#idName').val(),
+                UserType: $('#idUserType').val(),
+                Locked: $('#idLocked').val(),
+                Status: $('#idStatus').val(),
+                Image:filename
+            };
+            $('#idUserModal').modal('hide')
+
+            $.ajax({
+                url: "/User/Create",
+                type: 'POST',
+                dataType: 'JSON',
+                data: { obj: obj },
+                success: function(data) {
+                     let formData = new FormData($('#form-data')[0])
+                        $.ajax({
+                            url: "/User/Upload",
+                            type: 'POST',
+                            enctype: "multipart/form-data",
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (data) {
+                                dataTable.ajax.reload();
+                                $('#Loading').modal('hide')
+                                toastr.success("New User has been created successfully.", "Server Response");
+                                $('#idUserModal').modal('hide')
+                            }
+                        })                  
+                },
+                 error: function (errormessage) {
+                    $('#idUserModal').modal('hide')
+                        $('#Loading').modal('hide')
+                    toastr.error("This User is arlready exists in database.", "Server Response");
+                }
+            });
+        }
+    }
+    else if (action == "Update") {
+        if ($('#idUserCode').val().trim() == "") {
+            $('#idUserCode').css('border-color', 'red');
+            $('#idUserCode').focus();
+            toastr.info("Please enter item group's name.", "Server Response");
+        } else {
+            $('#idUserCode').css('border-color', '#cccccc');
+            $('#Loading').modal('show')
+
+            var path = $('#input_file').val();
+            var pos = path.lastIndexOf(path.charAt(path.indexOf(":") + 1));
+            var filename = path.substring(pos + 1)
+
+            var obj = {
+                 id: userId,
+                 //LevelCode: $('#idCode').val(),
+                 Name: $('#idName').val(),
+                 UserType: $('#idUserType').val(),
+                 Locked: $('#idLocked').val(),
+                 Status: $('#idStatus').val(),
+                 Image: filename
+            };
+            $('#idUserModal').modal('hide')
+             $.ajax({
+                 url: "/User/Update",
+                 type: 'POST',
+                 dataType: 'JSON',
+                 data: obj,
+                  success: function (data) {
+                       let formData = new FormData($('#form-data')[0])
+                       $.ajax({
+                            url: "/User/Upload",
+                            type: 'POST',
+                            enctype: "multipart/form-data",
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (data) {
+                                dataTable.ajax.reload();
+                                $('#Loading').modal('hide')
+                                toastr.success("This User has been updated successfully.", "Server Response");
+                                $('#idUserModal').modal('hide')
+                            }
+                       })
+                  },
+                  error: function (errormessage) {
+                        $('#Loading').modal('hide')
+                        toastr.error("This UserCode is arlready exists in database.", "Server Response");
+                  }
+             });
+        }
+    }
+}
+    var userId
+    function userEdit(id) {
+        enableControls()
+        $.ajax({
+            url: "/User/Edit",
+            type: "GET",
+            dataType: "json",
+            data: { id: id },
+            success: function (data) {
+                userId = data.id
+                $('#idUserCode').val(data.userCode).prop('disabled', true);
+                $('#idName').val(data.name);
+                $('#idUserType').val(data.userType);
+                if (data.expiredLocked == "Yes") $("#idReset").removeClass('d-none');
+                else $("#idReset").addClass('d-none')
+                if (data.change == "No") $("#idDelete").removeClass('d-none');
+                else $("#idDelete").addClass("d-none")
+                $('#idLocked').val(data.locked);
+                $('#idStatus').val(data.status);
+                if (data.image == "") {
+                    $('#UrlImage').attr('src', "../Uploads/User/blank-image.png");
+                    $('#input_file').val(data.image)
+                } else {
+                    $('#UrlImage').attr('src', "../Uploads/User/" + data.image);
+                }
+
+                $('#idUserModal').modal('show');
+                $('#btnSave').html("Update")
+            },
+            error: function (errormessage) {
+                toastr.error("This User is arlready exists in database.", "Server Response");
+            }
+        });
+    }
+
+///*    reset-user*/
+//var reset = false;
+//$('#idReset').click(function () {
+//    reset = true;
+//    Swal.fire({
+//        title: 'Are you sure?',
+//        text: "You want to reset this user!",
+//        icon: 'question',
+//        showCancelButton: true,
+//        confirmButtonColor: '#3085d6',
+//        cancelButtonColor: '#d33',
+//        confirmButtonText: 'Yes, I want to reset!'
+//    }).then((result) => {
+//        if (result.isConfirmed) {
+//            $('#idUserModal').modal('hide'),
+//            $.ajax({
+//                url: "/User/ResetUser",
+//                type: 'POST',
+//                dataType: 'JSON', //OK
+//                data: { username: $('#uidUsername').val() }, //objs parameter controller //obj view
+//                success: function (data) {
+//                    if (data.errCode == 0) {
+//                        $('#idUserModal').modal('hide'),
+//                        toastr.success(data.errMsg)
+//                        getUser()
+//                    } else {
+//                        toastr.warning(data.errMsg)
+//                    }
+//                }
+//            })
+//        }
+//    })
+//})
+//Delete User
+$('#idDelete').click(function(){
+        swal({
+            title: 'Are you sure?',
+            text: "You want to delete this user",
+            icon: "warning",
+            buttons: true,
+            dangermode: true
+        }).then((result) => {
+            if (result) {
+                $.ajax({
+                    url: '@Url.Action("DeleteUser", "User")',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: { id: userId },
+                    success: function (data) {
+                        dataTable.ajax.reload();
+                        toastr.success("This User has been delete successfully.", "Server Response");
+                        $('#idUserModal').modal('hide');
+                    }
+                })
+            }
+        })
+})
+//Reset-Passwrod
+    function resetpass(ID) {
+        swal({
+            title: 'Are you sure?',
+            text: "You want to reset password this user",
+            icon: "warning",
+            buttons: true,
+            dangermode: true
+        }).then((result) => {
+            if (result) {
+                $.ajax({
+                    url: '@Url.Action("ResetPass", "User")',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: { id: ID },
+                    success: function (data) {
+                        dataTable.ajax.reload();
+                        toastr.success("This User has been reseted password successfully.", "Server Response");
+                    }
+                })
+            }
+        })
+    }
+//Read Image
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#UrlImage').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function addNewUser() {
+    document.getElementById('btnSave').innerText = "Add New";
+    disableControls();
+    clearControls();
+}
+function enableControls() {
+    document.getElementById('idUserCode').disabled = false;
+    document.getElementById('idName').disabled = false;
+    document.getElementById('idUserType').disabled = false;
+    document.getElementById('idLocked').disabled = false;
+    document.getElementById('idStatus').disabled = false;
+    document.getElementById('input_file').disabled = false;
+}
+function disableControls() {
+    document.getElementById('idUserCode').disabled = true;
+    document.getElementById('idName').disabled = true;
+    document.getElementById('idUserType').disabled = true;
+    document.getElementById('idLocked').disabled = true;
+    document.getElementById('idStatus').disabled = true;
+    document.getElementById('input_file').disabled = true;
+}
+function clearControls() {
+    $('#idUserCode').val('');
+    $('#idName').val('');
+    $('#idUserType').val('');
+    $('#input_file').val('');
+    $('#UrlImage').attr('src','../Uploads/User/blank-image.png'); //default image
+    $("#idReset").addClass('d-none');
+    $("#idDelete").addClass('d-none');
+}
+
+</script>

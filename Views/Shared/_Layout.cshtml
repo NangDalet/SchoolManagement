@@ -1,0 +1,267 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SchoolManagement</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SchoolManagement.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/SlideBar.css" asp-append-version="true" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+   @* DataTable*@
+    <link href="~/js/jquery.datatables.min.css" rel="stylesheet" />
+    <script src="~/datatable/jquery.datatables.min.js"></script>
+    @*toastr*@
+    <link rel="stylesheet" type="text/css" href="/lib/toastr.js/toastr.min.css">
+ @*   font-awesome*@
+    <link rel="stylesheet" type="text/css" href="/lib/font-awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/fontawesome-free-6.1.1-web/fontawesome-free-6.1.1-web/css/all.css">
+  @*  chartJS*@
+     <script src="~/chartJS/chart.min.js"></script>
+    @* DataTable and Button*@
+    <script src="~/datatable/jquery-3.5.1.js"></script>
+    <script src="~/datatable/jquery.datatables.min.js"></script>
+    <script src="~/datatable/datatables.buttons.min.js"></script>
+    <script src="~/datatable/jszip.min.js"></script>
+    <script src="~/datatable/pdfmake.min.js"></script>
+    <script src="~/datatable/vfs_fonts.js"></script>
+    <script src="~/datatable/buttons.html5.min.js"></script>
+    <script src="~/datatable/buttons.print.min.js"></script>
+    <link href="~/datatable/buttons.datatables.min.css" rel="stylesheet" />
+    <link href="~/datatable/jquery.datatables.min.css" rel="stylesheet" />
+    <script src="~/datatable/buttons.colvis.min.js"></script>
+    <script src="~/datatable/datatables.rowgroup.min.js"></script>
+    <script src="~/datatable/datatables.select.min.js"></script>
+ @*   DateTimePicker*@
+    <link href="~/datetimepicker/jquery-ui.css" rel="stylesheet" />
+    <script src="~/datetimepicker/jquery-ui.js"></script>
+
+    <script src="~/chosen/chosen.jquery.min.js"></script>
+    <link href="~/chosen/chosen.min.css" rel="stylesheet" />
+
+</head>
+<body>
+  <div class="page-wrapper chiller-theme toggled">
+  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <i class="fas fa-bars"></i>
+  </a>
+  <nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-content">
+      <div class="sidebar-brand">
+        <a href="#">School Management</a>
+        <div id="close-sidebar">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div class="sidebar-header">
+        <div class="user-pic">
+           <img class="img-responsive img-rounded" src="~/Uploads/User/@HttpContextAccessor.HttpContext.Session.GetString("UrlImage")"alt="User picture">
+        </div>
+        <div class="user-info">
+          <span class="user-name">
+            <strong>@HttpContextAccessor.HttpContext.Session.GetString("Code")</strong>
+          </span>
+          <span class="user-role"></span>
+          <span class="user-status">
+            <i class="fa fa-circle"></i>
+            <span>Online</span>
+          </span>
+        </div>
+      </div>
+          @if (HttpContextAccessor.HttpContext.Session.GetString("UserType") == "Admin")
+                {
+                    <div class="sidebar-menu">
+                        <ul>
+                            <li class="header-menu">
+                                <span>General</span>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a a asp-action="Index" asp-controller="Home">
+                                    <i class="fa fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a href="#">
+                                    <i class="fa fa-tachometer-alt"></i>
+                                    <span>Source Management</span>
+                                </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="User">
+                                                Manage User
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Student">Student</a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Report">Report</a>
+                                        </li>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Deposit">Deposit</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a asp-action="Index" asp-controller="Level">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Level</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a asp-action="Index" asp-controller="Refund">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Refund</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a href="#">
+                                    <i class="fa fa-chart-line"></i>
+                                    <span>Charts</span>
+                                </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Test">Deposit</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Line chart</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Bar chart</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Histogram</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                @if (HttpContextAccessor.HttpContext.Session.GetString("UserType") == "User")
+                {
+                    <div class="sidebar-menu">
+                        <ul>
+                            <li class="header-menu">
+                                <span>General</span>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a a asp-action="Index" asp-controller="Home">
+                                    <i class="fa fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+  
+                            <li class="sidebar-dropdown">
+                                <a asp-action="Index" asp-controller="Level">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Level</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a asp-action="Index" asp-controller="Refund">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>Refund</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-dropdown">
+                                <a href="#">
+                                    <i class="fa fa-chart-line"></i>
+                                    <span>Charts</span>
+                                </a>
+                                <div class="sidebar-submenu">
+                                    <ul>
+                                        <li>
+                                            <a asp-action="Index" asp-controller="Test">Deposit</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Line chart</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Bar chart</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Histogram</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                }
+        
+      <!-- sidebar-menu  -->
+    </div>
+  </nav>
+  <!-- sidebar-wrapper  -->
+  <main class="page-content">
+    <div class="container-fluid">
+        @RenderBody()
+    </div>
+  </main>
+  <!-- page-content" -->
+</div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
+    <script src="~/lib/sweetalert/sweetalert.min.js"></script>
+   @* <script src="~/lib/font-awesome/js/fontawesome.min.js"></script>*@
+    @await RenderSectionAsync("Scripts", required: false)
+    <script type="text/javascript">
+           $(".sidebar-dropdown > a").click(function() {
+  $(".sidebar-submenu").slideUp(200);
+  if (
+    $(this)
+      .parent()
+      .hasClass("active")
+  ) {
+    $(".sidebar-dropdown").removeClass("active");
+    $(this)
+      .parent()
+      .removeClass("active");
+  } else {
+    $(".sidebar-dropdown").removeClass("active");
+    $(this)
+      .next(".sidebar-submenu")
+      .slideDown(200);
+    $(this)
+      .parent()
+      .addClass("active");
+  }
+});
+
+$("#close-sidebar").click(function() {
+  $(".page-wrapper").removeClass("toggled");
+});
+$("#show-sidebar").click(function() {
+  $(".page-wrapper").addClass("toggled");
+});
+
+  /* More-Modal-Popup*/
+    $(".modal-header").on("mousedown", function (mousedownEvt) {
+        var $draggable = $(this);
+        var x = mousedownEvt.pageX - $draggable.offset().left,
+            y = mousedownEvt.pageY - $draggable.offset().top;
+        $("body").on("mousemove.draggable", function (mousemoveEvt) {
+            $draggable.closest(".modal-dialog").offset({
+                "left": mousemoveEvt.pageX - x,
+                "top": mousemoveEvt.pageY - y
+            });
+        });
+        $("body").one("mouseup", function () {
+            $("body").off("mousemove.draggable");
+        });
+        $draggable.closest(".modal").one("bs.modal.hide", function () {
+            $("body").off("mousemove.draggable");
+        });
+    });
+    </script>
+</body>
+</html>

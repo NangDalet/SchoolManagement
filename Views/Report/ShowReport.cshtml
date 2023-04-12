@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewData["Title"] = "ShowReport";
+}
+
+<h1>ShowReport</h1>
+<div class="table-responsive">
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-striped table-bordered nowrap" style="width: 100%;" id="tbViewReport">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Invoice No</th>
+                        <th>Name</th>
+                        <th>PostingDate</th>
+                        <th>Created By</th>
+                        <th>Level Code</th>
+                        <th>Level Name</th>
+                        <th>Total</th>
+                        <th>Deposit</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+   
+   $(document).ready(function(){
+        $('btnViewReport').click(function(){
+            var fromDate = $('#fromDate input').val();
+            var toDate = $('#toDate input').val();
+
+            $.ajax({
+                url: "/Report/ViewReports",
+                type: "GET",
+                datatyp: "json"
+                success:function(data) {
+                    $('#tbViewReport').DataTable()
+                }
+            })
+        })
+   })
+
+    $('#btnViewReport').click(function () {
+        viewReport();
+    });
+</script>
+

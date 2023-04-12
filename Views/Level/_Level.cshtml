@@ -1,0 +1,38 @@
+﻿
+<!-- Button trigger modal -->
+@*<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+ Add New
+</button>*@
+
+<!-- Modal -->
+<div class="modal fade" id="idlevelModal" tabindex="-1" aria-labelledby="idlevelModal" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add/Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+           <div class="col-sm-12">
+             Level Code :
+             <input class="form-control" id="idCode"  />
+             Level Name :
+             <input class="form-control" id="idName" />
+              UnitPrice :
+             <input class="form-control" id="idPrice" />
+             Status :
+             <select class="form-select form-control" aria-label="Default select example" id="idStatus">
+               <option value="Active" selected>Active</option>
+               <option value="Inactive">Inactive</option>
+             </select>
+            </div>
+          </div> 
+          <hr />
+           <div class="d-grid gap-2">
+            <button type="button" id="btnSave" class="btn btn-primary" onclick="LevelAction();">Add New</button>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>

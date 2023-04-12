@@ -1,0 +1,322 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Home Page";
+}
+     <!-- Core Style CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+   <style>
+    .logo{font-size: 3rem;}
+   </style>
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 nowrap">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">School Management</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" data-bs-toggle="modal" data-bs-target="#idChangPassword" data-toggle="modal">Change Password</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-action="LogOut" asp-controller="Login">Log Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+@if(HttpContextAccessor.HttpContext.Session.GetString("UserType") == "Admin")
+{
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <!-- Card stats -->
+            <div class="row g-6 mb-6">
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col"> <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total User</span> <span class="h3 font-bold mb-0">@ViewBag.totalUser</span> </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-tertiary text-white text-lg rounded-circle"> <a asp-action="Index" asp-controller="User" style="color:white;"><i class="mdi mid-arrow-right"></i> <i class="fa-solid fa-users"></i> </a></div>
+                                </div>
+                            </div>
+                             <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-success text-success me-2"> <i class="bi bi-arrow-up me-1"></i>13% </span> <span class="text-nowrap text-xs text-muted">Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col"> <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Level</span> <span class="h3 font-bold mb-0">@ViewBag.totalLevel</span> </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-primary text-white text-lg rounded-circle"><a asp-action="Index" asp-controller="Level" style="color:white;"><i class="fa-solid fa-code-branch"></i></a></div>
+                                </div>
+                            </div>
+                             <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-success text-success me-2"> <i class="bi bi-arrow-up me-1"></i>30% </span> <span class="text-nowrap text-xs text-muted">Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total</span> <span class="h3 font-bold mb-0">
+                                        @ViewBag.toTalSalary
+                                        <h1 class="display-6 fw-bold" style="color:white" id="idToSalary"></h1>
+                                    </span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-info text-white text-lg rounded-circle"> <i class="fa-solid fa-dollar-sign"></i> </div>
+                                </div>
+                            </div>
+                             <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-danger text-danger me-2"> <i class="bi bi-arrow-down me-1"></i>-5% </span> <span class="text-nowrap text-xs text-muted">Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col"> <span class="h6 font-semibold text-muted text-sm d-block mb-2">Work load</span> <span class="h3 font-bold mb-0">95%</span> </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-warning text-white text-lg rounded-circle"> <i class="fa-solid fa-dollar-sign"></i> </div>
+                                </div>
+                            </div>
+                             <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-success text-success me-2"> <i class="bi bi-arrow-up me-1"></i>10% </span> <span class="text-nowrap text-xs text-muted">Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        Bar Chart
+                    </div>
+                    <div class="card-body">
+                        <canvas class="my-4 h-25" id="bar"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        Pie Chart
+                    </div>
+                    <div class="card-body">
+                        <canvas class="my-4 h-25" id="myPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+}
+
+@if (HttpContextAccessor.HttpContext.Session.GetString("UserType") == "User")
+{
+    <main class="py-6 bg-surface-secondary">
+        <div class="container-fluid">
+            <!-- Card stats -->
+            <div class="row g-6 mb-6">
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col"> <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total Level</span> <span class="h3 font-bold mb-0">@ViewBag.totalLevel</span> </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-primary text-white text-lg rounded-circle"><a asp-action="Index" asp-controller="Level" style="color:white;"><i class="fa-solid fa-code-branch"></i></a></div>
+                                </div>
+                            </div>
+                             <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-success text-success me-2"> <i class="bi bi-arrow-up me-1"></i>30% </span> <span class="text-nowrap text-xs text-muted">Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-sm-6 col-12">
+                    <div class="card shadow border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="h6 font-semibold text-muted text-sm d-block mb-2">Total</span> <span class="h3 font-bold mb-0">
+                                        @ViewBag.toTalSalary
+                                        <h1 class="display-6 fw-bold" style="color:white" id="idToSalary"></h1>
+                                    </span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-info text-white text-lg rounded-circle"> <i class="fa-solid fa-dollar-sign"></i> </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 mb-0 text-sm"> <span class="badge badge-pill bg-soft-danger text-danger me-2"> <i class="bi bi-arrow-down me-1"></i>Since last month</span> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        Bar Chart
+                    </div>
+                    <div class="card-body">
+                        <canvas class="my-4 h-25" id="bar"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-header">
+                        Pie Chart
+                    </div>
+                    <div class="card-body">
+                        <canvas class="my-4 h-25" id="myPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+}
+@*loading*@
+<div class="modal" id="Loading" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document" style="width: 120px;">
+        <div class="modal-content" style="padding: 10px; background-color: black; opacity:0.5;">
+            <div class="text-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; color:blue" role="status">
+                    <span class="sr-only">Loading....</span>
+                </div>
+                <br /> <span style="color:white">Loading....</span>
+            </div>
+        </div>
+    </div>
+</div>
+@await Html.PartialAsync("~/Views/Home/_ChangePassword.cshtml")
+<script type="text/javascript">
+
+
+     $.ajax({
+        type: "GET",
+        url: "/Home/GetStatistic",
+        dataType: "JSON",
+        success: function (data) {
+            var arrayNumber = [];
+            var arrayName = [];
+            for (var i = 0; i < data.length; i++) {
+                arrayNumber.push(data[i].number)
+                arrayName.push(data[i].name)
+            }
+
+            var barchart = document.getElementById('bar').getContext('2d');
+            var mybarchart = new Chart(barchart, {
+                type: 'bar',
+                data: {
+                    labels: arrayName,
+                    datasets: [{
+                        label: 'Bar Chart',
+                        data: arrayNumber,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgba(255, 205, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(201, 203, 207, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(255, 159, 64)',
+                            'rgb(255, 205, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(54, 162, 235)',
+                            'rgb(153, 102, 255)',
+                            'rgb(201, 203, 207)'
+                        ],
+                        borderWidth: 1,
+                        data: arrayNumber
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            })
+        },
+        error: function (e) {
+            console.log(e.responseText);
+        }
+    });
+
+     $.ajax({
+         type: "GET",
+         url: '@Url.Action("GetStatistic", "Home")',
+         dataType: "JSON",
+          success: function (data) {
+              var arrayNumber = [];
+              var arrayName = [];
+
+              for (var i = 0; i < data.length; i++) {
+                  arrayNumber.push(data[i].number)
+                  arrayName.push(data[i].name)
+              }
+
+              var ctx = document.getElementById('myPieChart').getContext('2d');
+              var myPieChart = new Chart(ctx, {
+                  type: 'pie',
+                  data: {
+                      labels: arrayName,
+                      datasets: [{
+                          backgroundColor: [
+                              'rgba(255, 99, 132, 0.2)',
+                              'rgba(255, 159, 64, 0.2)',
+                              'rgba(255, 205, 86, 0.2)',
+                              'rgba(75, 192, 192, 0.2)',
+                              'rgba(54, 162, 235, 0.2)',
+                              'rgba(153, 102, 255, 0.2)',
+                              'rgba(201, 203, 207, 0.2)'
+                          ],
+                          borderColor: [
+                              'rgb(255, 99, 132)',
+                              'rgb(255, 159, 64)',
+                              'rgb(255, 205, 86)',
+                              'rgb(75, 192, 192)',
+                              'rgb(54, 162, 235)',
+                              'rgb(153, 102, 255)',
+                              'rgb(201, 203, 207)'
+                          ],
+                          borderWidth: 1,
+                          data: arrayNumber
+                      }]
+                  }
+              });
+          },
+            error: function (e) {
+                console.log(e.responseText);
+            }
+     });
+    //function Salary() {
+    //    $.ajax({
+    //        url: "/Home/TotalPrice",
+    //        type: 'GET',
+    //        dataType: 'JSON',
+    //        success: function (data) {
+    //            $('#idToSalary').empty();
+    //            for (var i = 0; i < data.length; i++) {
+    //                $('#idToSalary').append(new Option(data[i].total));
+    //            }
+    //        }
+    //    })
+    //}
+    //Salary()
+</script>

@@ -1,0 +1,56 @@
+﻿@model SchoolManagement.Models.User
+<div class="modal fade" id="idUserModal" tabindex="-1" aria-labelledby="idUserModal" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add/Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="form-data">
+             <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <img class="center img-responsive img-thumbnail" id="UrlImage" src="~/Uploads/User/blank-image.png" />
+                </div>
+                <div class="form-group">
+                  <label>Upload Photo</label>
+                    <input onchange="readURL(this);" type="file" name="file" id="input_file" style="width:100%;" accept="image/jpeg, image/x-png,image/gif" required />
+
+                </div>
+             </div>            
+           <div class="col-sm-8">
+             User Code :
+             <input class="form-control" id="idUserCode"  />
+             Name :
+             <input class="form-control" id="idName" />
+            UserType :
+             <select class="form-select form-control" aria-label="Default select example" id="idUserType">
+               <option value="User"selected>User</option>
+               <option value="Admin">Admin</option>
+             </select>
+             Password :
+             <input class="form-control" id="idPassword" value="SM12345" readonly />
+             Locked :
+             <select class="form-select form-control" aria-label="Default select example" id="idLocked">
+               <option value="No" selected>No</option>
+               <option value="Yes">Yes</option>
+             </select>
+             Status :
+             <select class="form-select form-control" aria-label="Default select example" id="idStatus">
+               <option value="Active" selected>Active</option>
+               <option value="Inactive">Inactive</option>
+             </select>
+            </div>
+          </div> 
+          <hr />
+           <div class="d-grid gap-2">
+            <button type="button" id="btnSave" class="btn btn-primary" onclick="UserAction();">Add New</button>
+            <button id="idReset" class="btn btn-danger ">Reset</button>
+            <button id="idDelete" class="btn btn-danger">Delete</button>
+         </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

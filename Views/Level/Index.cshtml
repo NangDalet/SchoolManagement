@@ -1,0 +1,350 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="col-lg-12">
+    @await Html.PartialAsync("~/Views/Level/_Level.cshtml")
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h5>
+                <a asp-action="ViewLogin" asp-controller="Login"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Home</a>
+                <span>
+                    <a href="#"><i class="fas fa-angle-right"></i>Level</a>
+                </span>
+            </h5>
+        </div>
+    </div>
+    <button type="button" onclick="addNewLevel();" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#idlevelModal">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i>Add New
+    </button>
+    <hr />
+    <div class="table-responsive">
+        <div class="row">
+            <div class="col-sm-12">
+                <table class=" hover row-border hover order-column" id="idTbLevel" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Level Code</th>
+                            <th>Level Name</th>
+                            <th>Unit Price</th>
+                            <th>Status</th>
+                            <th>Command</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr />
+</div>
+@*loading*@
+<div class="modal" id="Loading" tabindex="-1" role="dialog" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document" style="width: 120px;">
+        <div class="modal-content" style="padding: 10px; background-color: black; opacity:0.5;">
+            <div class="text-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem; color:blue;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <br /> <span style="color:white">Loading...</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ajaxStart(function () {
+        $('#Loading').modal('show');
+    }).ajaxStop(function () {
+        $('#Loading').modal('hide');
+    });
+
+    var dataTable;
+    $(document).ready(function () {
+
+        $('#idTbLevel tbody').on('mouseenter', 'td', function () {
+            var colIdx = table.cell(this).index().column;
+
+            $(table.cells().nodes()).removeClass('highlight');
+            $(table.column(colIdx).nodes()).addClass('highlight');
+        });
+
+        dataTable = $('#idTbLevel').DataTable({
+            "ajax": {
+                "url": "/Level/GetAllLevel",
+                "type": "GET",
+                "datatype": "json"
+            },
+            columns: [
+                {
+                    render: function (data, type, full, meta) { return meta.row + 1; }
+                },
+                { data: "levelCode", autowidth: true },
+                { data: "levelName", autowidth: true },
+                {
+                    data: "unitPrice",
+                    render: function (unitPrice) {
+                        return " $ " + unitPrice;
+                    }
+                },
+                {
+                    data: "status", autowidth: true,
+                    render: function (data, type, full, meta) {
+                        if (data == "Active") {
+                            return '<center><span class="badge rounded-pill bg-success">Active</span></center>'
+                        }
+                        else {
+                            return '<center><span class="badge rounded-pill bg-danger">In-Active</span></center>'
+                        }
+                    }
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<center><a href="#" onclick="LevelEdit(' + full.id + ')"style="margin-right:10px;"><i class="fa fa-edit fa-lg "></i></a> <a href="#" onclick="deleteLevel(' + full.id + ')"style="margin-right:10px;"><i class="fa fa-trash fa-lg "></i></a></center>';
+                    }
+                }
+            ],
+            select: true,
+            dom: 'Bfrtip',
+            buttons: [  
+                {
+                    text: 'Add New',
+                    action: function (e, node, config) {
+                        $('#idlevelModal').modal('show')
+                    }
+                },
+                {
+                    extend: 'copy',
+                    text: '<i class="far fa-copy"></i> Copy',
+                    filename: 'Report of Level',
+                    title: "Information Level",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: '<i class="far fa-file-excel"></i> Excel',
+                    filename: 'Report of Level',
+                    title: "Information Level",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="far fa-file-pdf"></i> Pdf',
+                    filename: 'Report of Level',
+                    title: "Information Level",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print',
+                    filename: 'Report of Level',
+                    title: "",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3]
+                    }
+                },
+                {
+                    extend: 'spacer',
+                    style: 'bar',
+                    exportOptions: {
+                        columns: [ 1, 2, 3,4]
+                    }
+                },
+                
+                'colvis',
+                'pageLength'
+            ],
+             lengthMenu: [
+            [ 10, 25, 50,100, -1 ],
+                ['10 rows', '25 rows', '50 rows', '100 rows', 'Show all']
+        ],
+            scrollCollapse: true,
+        });
+    });
+
+    function LevelAction() {
+        var action = '';
+        action = document.getElementById('btnSave').innerText;
+
+        if (action == "Add New") {
+
+            document.getElementById('btnSave').innerText = "Save";
+            document.getElementById('idCode').disabled = false;
+            enableControls();
+            $('#idCode').focus();
+        } else if (action == "Save") {
+            var response = validate();
+
+            if (response == false) {
+                return false;
+            }
+            var obj = {
+                LevelCode: $('#idCode').val(),
+                LevelName: $('#idName').val(),
+                UnitPrice: $('#idPrice').val(),
+                Status: $('#idStatus').val(),
+            };
+            $('#idLevelModal').modal('hide')
+
+            $.ajax({
+                url: "/Level/Create",
+                type: 'POST',
+                dataType: 'JSON',
+                data: { obj: obj },
+                success: function (data) {
+                    dataTable.ajax.reload();
+                    toastr.success("New Level has been created successfully.", "Server Response");
+                    $('#idLevelModal').modal('hide')
+                },
+                error: function (errormessage) {
+                    $('#idLevelModal').modal('hide')
+                    toastr.error("This level code or level name are exists in database.", "Server Response");
+                }
+            });
+        }
+        else if (action == "Update") {
+            if ($('#idCode').val().trim() == "") {
+                $('#idCode').css('border-color', 'red');
+                $('#idCode').focus();
+                toastr.info("Please enter item group's name.", "Server Response");
+            } else {
+                $('#idCode').css('border-color', '#cccccc');
+
+                var obj = {
+                    id: levelId,
+                    LevelCode: $('#idCode').val(),
+                    LevelName: $('#idName').val(),
+                    UnitPrice: $('#idPrice').val(),
+                    Status: $('#idStatus').val(),
+                };
+                $('#idLevelModal').modal('hide')
+                $.ajax({
+                    url: "/Level/Update",
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: obj,
+                    success: function (data) {
+                        $('#idLevelModal').modal('hide')
+                        dataTable.ajax.reload();
+                        toastr.success("This Level has been updated successfully.", "Server Response");
+                    },
+                    error: function (errormessage) {
+                        $('#idLevelModal').modal('hide')
+                        toastr.error("This level name is arlready exists in database.", "Server Response");
+                    }
+                });
+            }
+        }
+    }
+
+    var levelId
+    function LevelEdit(id) {
+        enableControls()
+        $.ajax({
+            url: "/Level/Edit",
+            type: "GET",
+            dataType: "json",
+            data: { id: id },
+            success: function (data) {
+                levelId = data.id
+                $('#idCode').val(data.levelCode).prop('disabled', true);
+                $('#idName').val(data.levelName);
+                $('#idPrice').val(data.unitPrice);
+                $('#idStatus').val(data.status);
+
+                $('#idlevelModal').modal('show');
+                $('#btnSave').html("Update")
+            },
+            error: function (errormessage) {
+                toastr.error("This Level is arlready exists in database.", "Server Response");
+            }
+        });
+    }
+    function deleteLevel(ID){
+        swal({
+            title: 'Are you sure?',
+            text: "You want to delete this level",
+            icon: "warning",
+            buttons: true,
+            dangermode: true
+        }).then((result) => {
+            if (result) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Level")',
+                    type: 'GET',
+                    dataType: 'JSON',
+                    data: { id: ID },
+                    success: function (data) {
+                        dataTable.ajax.reload();
+                        toastr.success("This level has been delete successfully.", "Server Response");
+                        $('#idlevelModal').modal('hide');
+                    }
+                })
+            }
+        })
+    }
+    function addNewLevel() {
+        document.getElementById('btnSave').innerText = "Add New";
+        disableControls();
+        clearControls();
+    }
+    function validate() {
+        var isValid = true;
+        if ($('#idCode').val().trim() === "") {
+            $('#idCode').css('border-color', 'red');
+            $('#idCode').focus();
+            toastr.info("Please input level code.", "Server Response");
+            isValid = false;
+        } else {
+            $('#idName').css('border-color', '#cccccc');
+            if ($('#idName').val().trim() === "") {
+                $('#idName').css('border-color', 'red');
+                $('#idName').focus();
+                toastr.info("Please input level name.", "Server Response");
+                isValid = false;
+            } else {
+                $('#idPrice').css('border-color', '#cccccc');
+                if ($('#idPrice').val().trim() === "") {
+                    $('#idPrice').css('border-color', 'red');
+                    $('#idPrice').focus();
+                    toastr.info("Please input price.", "Server Response");
+                    isValid = false;
+                } else {
+                    $('#idCode').css('border-color', '#cccccc');
+                    $('#idName').css('border-color', '#cccccc');
+                    $('#idPrice').css('border-color', '#cccccc');
+                }
+            }
+        }
+        return isValid;
+    }
+    function enableControls() {
+        document.getElementById('idCode').disabled = false;
+        document.getElementById('idName').disabled = false;
+        document.getElementById('idPrice').disabled = false;
+        document.getElementById('idStatus').disabled = false;
+    }
+    function disableControls() {
+        document.getElementById('idCode').disabled = true;
+        document.getElementById('idName').disabled = true;
+        document.getElementById('idPrice').disabled = true;
+        document.getElementById('idStatus').disabled = true;
+    }
+    function clearControls() {
+        $('#idCode').val('');
+        $('#idName').val('');
+        $('#idPrice').val('');
+        $('#idCode').focus();
+    }
+</script>
+
+
