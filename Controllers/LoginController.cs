@@ -47,7 +47,7 @@ namespace SchoolManagement.Controllers
                 else if(result.Status== "InActive")
                 {
                     returnStatus.ErrCode = 1;
-                    returnStatus.ErrMsg = "User Is InActive, please contact to administration !";
+                    returnStatus.ErrMsg = "User Is In-Active, please contact to administration !";
                 }
                 else if (result.Locked == "Yes")
                 {
